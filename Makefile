@@ -24,7 +24,7 @@ TEST_DIR = tests
 TEST_SRCS := $(sort $(shell find $(TEST_DIR) -name '*.cpp' 2> /dev/null))
 
 # Includes
-INCLUDE_DIR =
+INCLUDE_DIR = header
 INCLUDES = $(addprefix -I,$(SRC_DIR) $(INCLUDE_DIR))
 TEST_INCLUDES = -I$(TEST_DIR)
 
