@@ -1,16 +1,52 @@
 #pragma once
 #include <algorithm>
+#include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+
+struct Price {
+    long long mantissa{};
+    int exponent{};
+
+    int compare(const Price& rhs) const {
+        if (exponent == rhs.exponent) {
+            return mantissa < rhs.mantissa ? -1 : mantissa == rhs.mantissa ? 0 : 1;
+        }
+
+        if (exponent < rhs.exponent) {
+            long long normalizedMantissa = mantissa * static_cast<long long>(std::pow(10, exponent - rhs.exponent));
+            return normalizedMantissa < rhs.mantissa ? -1 : normalizedMantissa == rhs.mantissa ? 0 : 1;
+        }
+
+        long long normalizedMantissa = rhs.mantissa * static_cast<long long>(std::pow(10, rhs.mantissa - exponent));
+        return mantissa < normalizedMantissa ? -1 : mantissa == normalizedMantissa ? 0 : 1;
+    }
+
+    bool operator<(const Price& rhs) const {
+        return compare(rhs) == -1;
+    }
+    bool operator<=(const Price& rhs) const {
+        return compare(rhs) <= 0;
+    }
+    bool operator==(const Price& rhs) const {
+        return compare(rhs) == 0;
+    }
+    bool operator>=(const Price& rhs) const {
+        return compare(rhs) >= 0;
+    }
+    bool operator>(const Price& rhs) const {
+        return compare(rhs) == 1;
+    }
+};
 
 struct Order {
     enum class Side { BUY, SELL };
     enum class Type { MARKET, LIMIT, STOP, GTC, FOK };
 
     int id{};
-    double price{};
+    Price price;
     int quantity{};
     Type type{};
     Side side{};
@@ -57,7 +93,7 @@ private:
         std::cout << "Buy Order ID: " 
                   << buyOrderId
                   << " with Sell Order ID: " << sellOrderId
-                  << " at Price: " << std::fixed << std::setprecision(2) << m_orders[sellIt->second].price
+                  << " at Price: " << m_orders[sellIt->second].price.mantissa << "e" << m_orders[sellIt->second].price.exponent
                   << " for Quantity: " << quantity << '\n';
 
         m_orders[buyIt->second].quantity -= quantity;

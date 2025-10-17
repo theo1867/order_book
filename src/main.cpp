@@ -8,14 +8,14 @@ int main() {
     OrderBook book;
 
     // Add orders to the order book
-    book.addOrder({1, 0.0, 10, Order::Type::MARKET, Order::Side::BUY});
-    book.addOrder({2, 101.0, 20, Order::Type::LIMIT, Order::Side::SELL});
-    book.addOrder({3, 99.0, 5, Order::Type::LIMIT, Order::Side::SELL});
-    book.addOrder({4, 0.0, 15, Order::Type::MARKET, Order::Side::SELL});
-    book.addOrder({5, 102.0, 10, Order::Type::GTC, Order::Side::BUY});
-    book.addOrder({6, 100.0, 8, Order::Type::FOK, Order::Side::SELL});
-    book.addOrder({7, 99.0, 12,  Order::Type::FOK, Order::Side::BUY});
-    book.addOrder({8, 101.0, 8, Order::Type::FOK, Order::Side::BUY});
+    book.addOrder({1, {0, -2}, 10, Order::Type::MARKET, Order::Side::BUY});
+    book.addOrder({2, {10100, -2}, 20, Order::Type::LIMIT, Order::Side::SELL});
+    book.addOrder({3, {9900, -2}, 5, Order::Type::LIMIT, Order::Side::SELL});
+    book.addOrder({4, {0, -2}, 15, Order::Type::MARKET, Order::Side::SELL});
+    book.addOrder({5, {10200, -2}, 10, Order::Type::GTC, Order::Side::BUY});
+    book.addOrder({6, {10000, -2}, 8, Order::Type::FOK, Order::Side::SELL});
+    book.addOrder({7, {9900, -2}, 12,  Order::Type::FOK, Order::Side::BUY});
+    book.addOrder({8, {10100, -2}, 8, Order::Type::FOK, Order::Side::BUY});
 
     std::cout << "Order Book before matching:" << std::endl;
     book.printOrders();

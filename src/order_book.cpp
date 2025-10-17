@@ -37,7 +37,7 @@ void OrderBook::matchOrders() {
 void OrderBook::printOrders() {
     for (auto& order : m_orders) {
             std::cout << "Order ID: " << order.id
-              << ", Price: " << order.price
+              << ", Price: " << order.price.mantissa << "e" << order.price.exponent
               << ", Type: " << static_cast<int>(order.type)
               << ", Side: " << (order.side == Order::Side::BUY ? "Buy" : "Sell")
               << ", Quantity: " << order.quantity
