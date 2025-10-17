@@ -3,6 +3,7 @@
 void OrderBook::addOrder(const Order& order) {
     m_orders.push_back(order);
     m_orderMap[order.id] = m_orders.size() - 1;
+    matchOrders();
 }
 
 void OrderBook::cancelOrder(const int id) {
@@ -14,24 +15,7 @@ void OrderBook::cancelOrder(const int id) {
 
     m_orders.erase(m_orders.begin() + m_orderMap[id]);
     m_orderMap.erase(it);
-}
-
-void OrderBook::matchOrders() {
-    auto buyOrders = getOrdersBySide(Order::Side::BUY);
-    auto sellOrders = getOrdersBySide(Order::Side::SELL);
-    for (auto& buyOrder : buyOrders) {
-        for (auto& sellOrder : sellOrders) {
-            if (buyOrder.price >= sellOrder.price) {
-                int fillQty = std::min(buyOrder.quantity, sellOrder.quantity);
-                executeOrder(buyOrder.id, sellOrder.id, fillQty);
-                buyOrder.quantity -= fillQty;
-                sellOrder.quantity -= fillQty;
-                if (buyOrder.quantity == 0) {
-                    break;
-                }
-            }
-        }
-    }
+    matchOrders();
 }
 
 void OrderBook::printOrders() {

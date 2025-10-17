@@ -57,7 +57,6 @@ class OrderBook {
 public:
     void addOrder(const Order& order);
     void cancelOrder(const int orderId);
-    void matchOrders();
     void printOrders();
 
 private:
@@ -76,6 +75,25 @@ private:
         });
         return result;
     }
+
+    void matchOrders() {
+        auto buyOrders = getOrdersBySide(Order::Side::BUY);
+        auto sellOrders = getOrdersBySide(Order::Side::SELL);
+        for (auto& buyOrder : buyOrders) {
+            for (auto& sellOrder : sellOrders) {
+                if (buyOrder.price >= sellOrder.price) {
+                    int fillQty = std::min(buyOrder.quantity, sellOrder.quantity);
+                    executeOrder(buyOrder.id, sellOrder.id, fillQty);
+                    buyOrder.quantity -= fillQty;
+                    sellOrder.quantity -= fillQty;
+                    if (buyOrder.quantity == 0) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
 
     void executeOrder(int buyOrderId, int sellOrderId, int quantity) {
         auto buyIt = m_orderMap.find(buyOrderId);
