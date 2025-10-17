@@ -2,7 +2,7 @@
 
 void OrderBook::addOrder(const Order& order) {
     m_orders.push_back(order);
-    m_orderMap[order.getId()] = m_orders.size() - 1;
+    m_orderMap[order.id] = m_orders.size() - 1;
 }
 
 void OrderBook::cancelOrder(const int id) {
@@ -21,12 +21,12 @@ void OrderBook::matchOrders() {
     auto sellOrders = getOrdersBySide(Order::Side::SELL);
     for (auto& buyOrder : buyOrders) {
         for (auto& sellOrder : sellOrders) {
-            if (buyOrder.getPrice() >= sellOrder.getPrice()) {
-                int fillQty = std::min(buyOrder.getQuantity(), sellOrder.getQuantity());
-                executeOrder(buyOrder.getId(), sellOrder.getId(), fillQty);
-                buyOrder.setQuantity(buyOrder.getQuantity() - fillQty);
-                sellOrder.setQuantity(sellOrder.getQuantity() - fillQty);
-                if (buyOrder.getQuantity() == 0) {
+            if (buyOrder.price >= sellOrder.price) {
+                int fillQty = std::min(buyOrder.quantity, sellOrder.quantity);
+                executeOrder(buyOrder.id, sellOrder.id, fillQty);
+                buyOrder.quantity -= fillQty;
+                sellOrder.quantity -= fillQty;
+                if (buyOrder.quantity == 0) {
                     break;
                 }
             }
@@ -36,6 +36,11 @@ void OrderBook::matchOrders() {
 
 void OrderBook::printOrders() {
     for (auto& order : m_orders) {
-        order.printOrder();
+            std::cout << "Order ID: " << order.id
+              << ", Price: " << order.price
+              << ", Type: " << static_cast<int>(order.type)
+              << ", Side: " << (order.side == Order::Side::BUY ? "Buy" : "Sell")
+              << ", Quantity: " << order.quantity
+              << '\n';
     }
 }

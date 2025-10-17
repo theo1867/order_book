@@ -4,7 +4,18 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
-#include "order.h"
+
+struct Order {
+    enum class Side { BUY, SELL };
+    enum class Type { MARKET, LIMIT, STOP, GTC, FOK };
+
+    int id{};
+    double price{};
+    int quantity{};
+    Type type{};
+    Side side{};
+};
+
 
 class OrderBook {
 public:
@@ -20,12 +31,12 @@ private:
     std::vector<Order> getOrdersBySide(Order::Side side) {
         std::vector<Order> result;
         for (auto& order: m_orders) {
-            if (order.getSide() == side) {
+            if (order.side == side) {
                 result.push_back(order);
             }
         }
         std::sort(result.begin(), result.end(), [](const Order& a, const Order& b) {
-            return a.getPrice() < b.getPrice();
+            return a.price < b.price;
         });
         return result;
     }
@@ -46,10 +57,10 @@ private:
         std::cout << "Buy Order ID: " 
                   << buyOrderId
                   << " with Sell Order ID: " << sellOrderId
-                  << " at Price: " << std::fixed << std::setprecision(2) << m_orders[sellIt->second].getPrice()
+                  << " at Price: " << std::fixed << std::setprecision(2) << m_orders[sellIt->second].price
                   << " for Quantity: " << quantity << '\n';
 
-        m_orders[buyIt->second].setQuantity(m_orders[buyIt->second].getQuantity() - quantity);
-        m_orders[sellIt->second].setQuantity(m_orders[sellIt->second].getQuantity() - quantity);
+        m_orders[buyIt->second].quantity -= quantity;
+        m_orders[sellIt->second].quantity -= quantity;
     }
 };
